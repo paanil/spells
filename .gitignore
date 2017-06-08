@@ -2,3 +2,5 @@
 *.csv
 *.js
 *.4project
+*.json
+*.autogen.inl

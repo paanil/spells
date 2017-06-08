@@ -1,12 +1,12 @@
+#include "utils.h"
+#include <cstdio>
+#include <cstdlib>
 
-#define ArrayCount(a) (sizeof(a)/sizeof(*a))
-
-static char *
-ReadEntireFileAndNullTerminate(const char *fname)
+char *ReadEntireFileAndNullTerminate(const char *file_name)
 {
     char *result = 0;
 
-    FILE *f = fopen(fname, "rb");
+    FILE *f = fopen(file_name, "rb");
     if (f)
     {
         fseek(f, 0, SEEK_END);
@@ -21,96 +21,7 @@ ReadEntireFileAndNullTerminate(const char *fname)
     return result;
 }
 
-inline bool
-IsNumber(char c)
+void ReleaseEntireFile(char *file_data)
 {
-    return ('0' <= c && c <= '9');
+    free(file_data);
 }
-
-inline char
-ToLower(char c)
-{
-    return ('A' <= c && c <= 'Z') ? (c - 'A' + 'a') : c;
-}
-
-int StringCompare(const char *a, const char *b)
-{
-    while (*a && *a == *b)
-    {
-        ++a;
-        ++b;
-    }
-    return (*a - *b);
-}
-
-int StringCompareI(const char *a, const char *b)
-{
-    while (*a && ToLower(*a) == ToLower(*b))
-    {
-        ++a;
-        ++b;
-    }
-    return (*a - *b);
-}
-
-struct Simplex
-{
-    char *at;
-
-    inline void SkipSpace()
-    {
-        while (*at == ' ') ++at;
-    }
-
-    bool Keyword(const char *kw)
-    {
-        char *temp = at;
-
-        SkipSpace();
-        for (; *at && *kw; ++at, ++kw)
-        {
-            if (ToLower(*at) != ToLower(*kw))
-                break;
-        }
-
-        if (*kw == 0)
-            return true;
-
-        at = temp;
-        return false;
-    }
-
-    bool Num(int *result)
-    {
-        char *temp = at;
-
-        SkipSpace();
-        if (IsNumber(*at))
-        {
-            int num = 0;
-            while (IsNumber(*at))
-            {
-                num *= 10;
-                num += *at++ - '0';
-            }
-
-            *result = num;
-            return true;
-        }
-
-        at = temp;
-        return false;
-    }
-
-    bool Char(char c)
-    {
-        char *temp = at;
-
-        SkipSpace();
-        if (*at++ == c)
-            return true;
-
-        at = temp;
-        return false;
-    }
-};
