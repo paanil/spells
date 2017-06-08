@@ -1,0 +1,18 @@
+[
+  {
+    "description": [
+      "You launch a ball of fire from your hand. If it hits, the target suffers 3d6 fire damage.",
+      "Damage is increased by 1d6 at level 5, 10, and 15."
+    ],
+    "level": 2,
+    "id": 0,
+    "url": "http://example.com/BallofFire",
+    "components": "V, S",
+    "ritual": false,
+    "name": "Ball of Fire",
+    "range": "30 feet",
+    "casting_time": "1 action",
+    "school": 4,
+    "duration": "Instantaneous"
+  }
+]

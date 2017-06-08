@@ -4,3 +4,4 @@
 *.4project
 *.json
 *.autogen.inl
+!example.json
