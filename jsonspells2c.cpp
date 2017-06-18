@@ -44,8 +44,7 @@ static SpellNotes initial_notes[] =
 } while(0)
 #define STR_APPEND_SEP(dest, sep, fmt, ...) do { \
     int len = strlen(dest); \
-    const char *fmt_ = len ? sep fmt : fmt; \
-    snprintf(dest + len, sizeof(dest) - len, fmt_, ##__VA_ARGS__); \
+    snprintf(dest + len, sizeof(dest) - len, len ? sep fmt : fmt, ##__VA_ARGS__); \
 } while(0)
 #define ERROR(msg, ...) do { \
     LogError("%s: " msg, spell.name, ##__VA_ARGS__); \
