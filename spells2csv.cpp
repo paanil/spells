@@ -1,7 +1,5 @@
 #include "spell.h"
 #include "utils.h"
-#include <cstdio>
-#include <cstring>
 
 static const Spell all_spells[] =
 {

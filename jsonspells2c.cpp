@@ -1,19 +1,34 @@
-#include "json_spell_parser.h"
 #include "spell_common.h"
 #include "spell_iterator.h"
+#include "json_parser.h"
 #include "simplex.h"
-#include "utils.h"
-#include <cstdio>
-#include <cstring>
+
+struct SpellObject
+{
+    int id;
+    char *name;
+    int level;
+    int school;
+    char *casting_time;
+    char *range;
+    char *components;
+    char *duration;
+    bool ritual;
+};
+
+#define PROCESS_SPELL(func_name) bool func_name(SpellObject &spell, void *user_ptr)
+typedef PROCESS_SPELL(spell_processing_func);
+
+// NOTE: Implementation after main.
+bool ParseSpells(char *data, spell_processing_func *process_spell, void *user_ptr);
+
 
 // Initial notes
-
 struct SpellNotes
 {
     const char *spell_name;
     const char *notes;
 };
-
 static SpellNotes initial_notes[] =
 {
     {
@@ -21,7 +36,6 @@ static SpellNotes initial_notes[] =
         "1-2 targets; dex save or 1d6/acid; +1d6 at 5/11/17"
     }
 };
-
 
 
 #define STR_APPEND(dest, fmt, ...) do { \
@@ -299,12 +313,9 @@ PROCESS_SPELL(PrintSpell)
     return true;
 }
 
-#undef STR_APPEND
-#undef STR_APPEND_SEP
-#undef ERROR
 
+// main
 
-#include <cassert>
 int main(int argc, const char **argv)
 {
     if (argc < 2)
@@ -357,4 +368,48 @@ int main(int argc, const char **argv)
     }
 
     return ret;
+}
+
+// ParseSpells implementation
+
+#define ERROR(msg, ...) do { \
+    LogError(msg "\n", ##__VA_ARGS__); \
+    json::Free(value);
+    return false; } while(0)
+
+#define GET(Type, member) \
+if (!json::TryGet##Type##Field(item, #member, &spell.member)) { \
+    ERROR("Spell object doesn't have " #Type "-field '" #member "'!"); } while(0)
+
+bool ParseSpells(char *data, spell_processing_func *process_spell, void *user_ptr)
+{
+    json::Value *value = json::Parse(data);
+    if (!value) return false;
+
+    if (!json::IsList(value))
+        ERROR("Expected a list containing spell objects!");
+
+    for (json::Value *item = json::GetFirstListItem(value);
+         item; item = json::GetNextListItem(item))
+    {
+        if (!json::IsObject(item))
+            ERROR("List doesn't contain (only) spell objects!");
+
+        SpellObject spell = {};
+
+        GET(Int, id);
+        GET(String, name);
+        GET(Int, level);
+        GET(Int, school);
+        GET(Bool, ritual);
+        GET(String, casting_time);
+        GET(String, range);
+        GET(String, components);
+        GET(String, duration);
+
+        if (!process_spell(spell, user_ptr))
+            ERROR("Spell processing failed.");
+    }
+
+    return true;
 }
