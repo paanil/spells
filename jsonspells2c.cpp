@@ -371,9 +371,10 @@ int main(int argc, const char **argv)
 
 // ParseSpells implementation
 
+#undef ERROR
 #define ERROR(msg, ...) do { \
     LogError(msg "\n", ##__VA_ARGS__); \
-    json::Free(value);
+    json::Free(value); \
     return false; } while(0)
 
 #define GET(Type, member) \
