@@ -5,6 +5,7 @@
 #include <cstring>
 #include <cassert>
 #include <cstdio>
+#include <cstdint>
 
 #define LogError(fmt, ...) fprintf(stderr, "[ERROR] " fmt "\n", ##__VA_ARGS__)
 

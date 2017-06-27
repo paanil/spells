@@ -1,4 +1,4 @@
-g++ -Wall -std=c++11 jsonspells2c.cpp json_spell_parser.cpp spell_iterator.cpp utils.cpp -o jsonspells2c 
+g++ -Wall -std=c++11 jsonspells2c.cpp json_parser.cpp spell_iterator.cpp -o jsonspells2c 
 
 ./jsonspells2c example.json spells.autogen.inl
 
